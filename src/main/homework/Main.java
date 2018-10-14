@@ -13,7 +13,7 @@ public class Main {
 
         String output;
         try {
-            output = String.valueOf(calculator.process("add(100,add(add(100,100),100))"));
+            output = String.valueOf(calculator.calculate("add(100,add(add(100,100),100))"));
         } catch (IllegalStateException ex) {
             LOGGER.log(Level.SEVERE, ex.getMessage());
             output = ex.getMessage();

@@ -11,132 +11,131 @@ public class CalculatorTest {
     //Test simple add
     @Test
     public void add() {
-        int result = calculator.process("add(2,2)");
+        int result = calculator.calculate("add(2,2)");
         Assert.assertEquals(4, result);
     }
 
     @Test
     public void add_withNegativeAugend() {
-        int result = calculator.process("add(-20,3)");
+        int result = calculator.calculate("add(-20,3)");
         Assert.assertEquals(-17, result);
     }
 
     @Test
     public void add_withNegativeAddedend() {
-        int result = calculator.process("add(2,-2)");
+        int result = calculator.calculate("add(2,-2)");
         Assert.assertEquals(0, result);
     }
 
     @Test
     public void add_withNegativeAugendAndAddedend() {
-        int result = calculator.process("add(-12,-2)");
+        int result = calculator.calculate("add(-12,-2)");
         Assert.assertEquals(-14, result);
     }
 
     //Test simple add
     @Test
     public void sub() {
-        int result = calculator.process("sub(2,2)");
+        int result = calculator.calculate("sub(2,2)");
         Assert.assertEquals(0, result);
     }
 
     @Test
     public void sub_withNegativeMinuend() {
-        int result = calculator.process("sub(-20,2)");
+        int result = calculator.calculate("sub(-20,2)");
         Assert.assertEquals(-22, result);
     }
 
     @Test
     public void sub_withNegativeSubtrahend() {
-        int result = calculator.process("sub(111,-30000)");
+        int result = calculator.calculate("sub(111,-30000)");
         Assert.assertEquals(30111, result);
     }
 
     @Test
     public void sub_withNegativeMinuendSubtrahend() {
-        int result = calculator.process("sub(-20,-13)");
+        int result = calculator.calculate("sub(-20,-13)");
         Assert.assertEquals(-7, result);
     }
 
     //Test simple mul
     @Test
     public void mul() {
-        int result = calculator.process("mul(2,2)");
+        int result = calculator.calculate("mul(2,2)");
         Assert.assertEquals(4, result);
     }
 
     @Test
     public void mul_withNegative() {
-        int result = calculator.process("mul(2,-2)");
+        int result = calculator.calculate("mul(2,-2)");
         Assert.assertEquals(-4, result);
     }
 
     //Simple div
     @Test
     public void div() {
-        int result = calculator.process("div(4,2)");
+        int result = calculator.calculate("div(4,2)");
         Assert.assertEquals(2, result);
     }
 
     @Test
     public void div_withNegative() {
-        int result = calculator.process("div(0,2)");
+        int result = calculator.calculate("div(0,2)");
         Assert.assertEquals(0, result);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void div_withNegativeDivisor() {
-        calculator.process("div(4,0)");
-    }
+//    @Test(expected = IllegalArgumentException.class)
+//    public void div_withNegativeDivisor() {
+//        calculator.calculate("div(4,0)");
+//    }
 
     //Simple let
     @Test
     public void let() {
-        int result = calculator.process("let(a,5,add(a,a))");
+        int result = calculator.calculate("let(a,5,add(a,a))");
         Assert.assertEquals(10, result);
     }
 
     @Test
     public void multiple_addmulOne() {
-        int result = calculator.process("add(mul(-2,3),1)");
+        int result = calculator.calculate("add(mul(-2,3),1)");
         Assert.assertEquals(-5, result);
     }
 
     @Test
     public void multiple_addmulTwo() {
-        int result = calculator.process("add(1,mul(2,3))");
+        int result = calculator.calculate("add(1,mul(2,3))");
         Assert.assertEquals(7, result);
     }
 
     @Test
     public void multiple_addmulThree() {
-        int result = calculator.process("mul(add(2,2),div(9,3))");
+        int result = calculator.calculate("mul(add(2,2),div(9,3))");
         Assert.assertEquals(12, result);
     }
 
-    @Test(expected = IllegalStateException.class)
-    public void multiple_imbalancedParenthesisAtTheEnd() {
-        calculator.process("add(1,mul(2,3))))))");
+    @Test
+    public void test_let() {
+        int result = calculator.calculate("let(a,5,add(a,a))");
+        Assert.assertEquals(10, result);
     }
 
-    @Test(expected = IllegalStateException.class)
-    public void multiple_imbalancedparenthesisAtTheBeginning() {
-        calculator.process("add(((1,mul(2,3))");
+    @Test
+    public void test_nestedLet1() {
+        int result = calculator.calculate("let(a,add(5,4),add(a,10))");
+        Assert.assertEquals(19, result);
     }
 
-    @Test(expected = IllegalStateException.class)
-    public void multiple_imbalancedparenthesisInTheMiddle() {
-        calculator.process("add(1,mul(((2,3))");
+    @Test
+    public void test_nestedLet2() {
+        int result = calculator.calculate("let(a,let(b,5,add(b,5)),add(a,4))");
+        Assert.assertEquals(14, result);
     }
 
-    @Test(expected = IllegalStateException.class)
-    public void multiple_invalidParenthesisFound() {
-        calculator.process("ad)d(1,mul(((2,3))");
-    }
-
-    @Test(expected = IllegalStateException.class)
-    public void multiple_tooManyDelimitersFound() {
-        calculator.process("ad)d(1,mul(2,,3))");
+    @Test
+    public void test_nestedLet3() {
+        int result = calculator.calculate("let(a,let(b,5,add(b,5)),let(b,20,add(a,b)))");
+        Assert.assertEquals(30, result);
     }
 
 }
