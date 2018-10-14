@@ -1,4 +1,4 @@
-package com.homework.calculator;
+package main.homework;
 
 public interface MainType {
     int calculate();

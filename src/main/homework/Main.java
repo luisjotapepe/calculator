@@ -1,8 +1,7 @@
-package com.homework.calculator;
+package main.homework;
 
 
 public class Main {
-
 
     private static Calculator calculator = new Calculator();
 
