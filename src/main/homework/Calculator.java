@@ -75,6 +75,9 @@ public class Calculator {
         String stringResult = null;
         if (node.isOperand()) {
             String leftSideStr = evaluator(node.getLeftNode());
+
+            Node centerNode = node.getCenterNode();
+            centerNode.copyIntoCache(node.getCache());
             String centerSideStr = evaluator(node.getCenterNode());
 
             if (node.isBinary()) {
@@ -85,10 +88,10 @@ public class Calculator {
                 stringResult = String.valueOf(result);
             }
             else if (node.isTernary()) {
-                node.addToCache(node.getLeftNode().getValue(), centerSideStr);
+                node.addToCache(leftSideStr, centerSideStr);
                 Node rightNode = node.getRightNode();
                 rightNode.copyIntoCache(node.getCache());
-                stringResult = evaluator(node.getRightNode());
+                stringResult = evaluator(rightNode);
             }
         }
         else {

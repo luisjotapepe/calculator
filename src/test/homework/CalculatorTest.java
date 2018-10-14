@@ -109,7 +109,7 @@ public class CalculatorTest {
     @Test
     public void sub_singleNestedOperand() {
         int result = calculator.calculate("sub(sub(40,30),400)");
-        Assert.assertEquals(390, result);
+        Assert.assertEquals(-390, result);
     }
 
     @Test
@@ -252,7 +252,7 @@ public class CalculatorTest {
 
     @Test
     public void let_nestedValueExpression() {
-        int result = calculator.calculate("let(a,5,let(b,mul(a,10),add(b,a)))");
+        int result = calculator.calculate("let(a,5,let(b,mul(a,10),add(a,b)))");
         Assert.assertEquals(55, result);
     }
 
@@ -260,6 +260,12 @@ public class CalculatorTest {
     public void let_nestedDoubleValueExpression() {
         int result = calculator.calculate("let(a,let(b,10,add(b,b)),let(b,20,add(a,b)))");
         Assert.assertEquals(40, result);
+    }
+
+    @Test
+    public void let_nestedValueExpressionExtra() {
+        int result = calculator.calculate("let(a,let(b,10,add(b,b)),let(b,30,add(a,b)))");
+        Assert.assertEquals(50, result);
     }
 
 
