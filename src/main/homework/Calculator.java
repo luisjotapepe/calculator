@@ -15,7 +15,7 @@ public class Calculator {
     private static boolean balanced = true;
 
     public int calculate(String equation) {
-        //lexer
+        //tokenizer
         Queue<Token> tokens = tokenizer(equation);
         //parser
         Node root = parser(tokens);
@@ -43,7 +43,7 @@ public class Calculator {
                     break;
                 default:
                     String value = getValue(equation, index);
-                    OperationLower.Type type = getOperandType(value);
+                    Operand.Type type = getOperandType(value);
                     if (type != null) {
                         token = new Token(type);
                     }
@@ -58,32 +58,17 @@ public class Calculator {
         return allTokens;
     }
 
-    private OperationLower.Type getOperandType(String arg) {
-        OperationLower.Type type;
-        switch(arg) {
-            case "add":
-                 type = OperationLower.Type.add;
-                 break;
-            case "sub":
-                type = OperationLower.Type.sub;
-                break;
-            case "mul":
-                type = OperationLower.Type.mul;
-                break;
-            case "div":
-                type = OperationLower.Type.div;
-                break;
-            case "let":
-                type = OperationLower.Type.let;
-                break;
-            default:
-                type = null;
+    private Node parser(Queue<Token> allTokens) {
+        Node root;
+        Token token = allTokens.remove();
+        if (token.isOperand()) {
+            root = new Node(token.getParam(), null, token.getOperation());
+        } else {
+            throw new IllegalArgumentException("Illegal state!");
         }
-        return type;
-    }
 
-    private boolean isNumeric(String str) {
-        return str.matches("-?\\d+(\\.\\d+)?");
+        populateTree(allTokens, root);
+        return root;
     }
 
     private String evaluator(Node node) {
@@ -111,34 +96,74 @@ public class Calculator {
         }
 
         if (stringResult == null) {
-            //todo: throw exception
+            throw new IllegalStateException("Invalid state!");
         }
 
         return stringResult;
     }
 
-    private Integer calculateBinary(Node node, Integer dLeft, Integer dCenter) {
+    private Operand.Type getOperandType(String arg) {
+        Operand.Type type;
+        switch(arg) {
+            case "add":
+                 type = Operand.Type.add;
+                 break;
+            case "sub":
+                type = Operand.Type.sub;
+                break;
+            case "mul":
+                type = Operand.Type.mul;
+                break;
+            case "div":
+                type = Operand.Type.div;
+                break;
+            case "let":
+                type = Operand.Type.let;
+                break;
+            default:
+                type = null;
+        }
+        return type;
+    }
+
+    private boolean isNumeric(String str) {
+        return str.matches("-?\\d+(\\.\\d+)?");
+    }
+
+    private Integer calculateBinary(Node node, Integer iLeft, Integer iCenter) {
         Integer result;
         switch(node.getOperand()) {
             case add:
-                result = dLeft + dCenter;
+                result = iLeft + iCenter;
                 break;
             case sub:
-                result = dLeft - dCenter;
+                result = iLeft - iCenter;
                 break;
             case mul:
-                result = dLeft * dCenter;
+                result = iLeft * iCenter;
                 break;
             case div:
-                if (dCenter == 0) {
-                    throw new IllegalArgumentException();
-                }
-                result = dLeft / dCenter;
+                result = calculateDiv(iLeft, iCenter);
                 break;
             default:
                 throw new IllegalArgumentException();
         }
         return result;
+    }
+
+    private Integer calculateDiv(Integer iLeft, Integer iCenter) {
+        if (iCenter == 0) {
+            throw new IllegalArgumentException("Divisor can't be zero");
+        }
+        double dLeft = new Double(iLeft);
+        double dCenter = new Double(iCenter);
+        Double dResult = dLeft / dCenter;
+        if (dResult < 0 ) {
+            dResult = Math.ceil(dResult);
+        } else {
+            dResult = Math.floor(dResult);
+        }
+        return dResult.intValue();
     }
 
     private Integer getValueFromString(String stringValue, Map<String,Integer> cache) {
@@ -168,19 +193,6 @@ public class Calculator {
             }
         }
         return eq.substring(i, j);
-    }
-
-    private Node parser(Queue<Token> allTokens) {
-        Node root;
-        Token token = allTokens.remove();
-        if (token.isOperand()) {
-            root = new Node(token.getParam(), null, token.getOperation());
-        } else {
-            throw new IllegalArgumentException("Illegal state!");
-        }
-
-        populateTree(allTokens, root);
-        return root;
     }
 
     private void populateTree(Queue<Token> tokens, Node parent) {

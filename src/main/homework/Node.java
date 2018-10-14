@@ -11,9 +11,9 @@ public class Node<T> {
     Node left;
     Node center;
     Node right;
-    private OperationLower.Type operand;
+    private Operand.Type operand;
 
-    public Node(String value, Node<T> parent, OperationLower.Type operand) {
+    public Node(String value, Node<T> parent, Operand.Type operand) {
         this.value = value;
         this.parent = parent;
         this.operand = operand;
@@ -52,11 +52,11 @@ public class Node<T> {
     }
 
     public boolean isBinary() {
-        return OperationLower.binaryOperators(). contains(operand);
+        return Operand.binaryOperators(). contains(operand);
     }
 
     public boolean isTernary() {
-        return OperationLower.ternaryOperators().contains(operand);
+        return Operand.ternaryOperators().contains(operand);
     }
 
     public boolean isRoot() {
@@ -71,7 +71,7 @@ public class Node<T> {
         return operand != null;
     }
 
-    public OperationLower.Type getOperand() {
+    public Operand.Type getOperand() {
         return operand;
     }
 

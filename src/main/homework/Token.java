@@ -3,10 +3,10 @@ package main.homework;
 
 public class Token {
 
-    private OperationLower.Type operation;
+    private Operand.Type operation;
     private String value;
 
-    public Token(OperationLower.Type operand) {
+    public Token(Operand.Type operand) {
         operation = operand;
     }
 
@@ -26,18 +26,7 @@ public class Token {
         return operation != null;
     }
 
-    public boolean isBinaryOperand() {
-        return operation == OperationLower.Type.add
-                || operation == OperationLower.Type.sub
-                || operation == OperationLower.Type.mul
-                || operation == OperationLower.Type.div;
-    }
-
-    public boolean isTernaryOperand() {
-        return operation == OperationLower.Type.let;
-    }
-
-    public OperationLower.Type getOperation() {
+    public Operand.Type getOperation() {
         return operation;
     }
 
