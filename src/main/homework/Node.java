@@ -3,25 +3,28 @@ package main.homework;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Node<T> {
-    private Node<T> parent;
+public class Node {
 
-    Map<String,Integer> cache;
-    String value;
-    Node left;
-    Node center;
-    Node right;
+    private Map<String,Integer> cache = new HashMap<>();
     private Operand.Type operand;
+    private String value;
+    private Node parent;
+    private Node left;
+    private Node center;
+    private Node right;
 
-    public Node(String value, Node<T> parent, Operand.Type operand) {
-        this.value = value;
+    public Node(Node parent, Operand.Type operand) {
         this.parent = parent;
         this.operand = operand;
-        this.cache = new HashMap<>();
     }
 
-    public void setParent(Node<T> parent) {
+    public Node(String value, Node parent) {
+        this.value = value;
         this.parent = parent;
+    }
+
+    public Node(Operand.Type operand) {
+        this.operand = operand;
     }
 
     public void addChild(Node child) {

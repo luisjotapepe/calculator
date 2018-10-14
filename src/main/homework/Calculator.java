@@ -62,9 +62,9 @@ public class Calculator {
         Node root;
         Token token = allTokens.remove();
         if (token.isOperand()) {
-            root = new Node(token.getParam(), null, token.getOperation());
+            root = new Node(token.getOperation());
         } else {
-            throw new IllegalArgumentException("Illegal state!");
+            throw new IllegalArgumentException("First token is not operand. Invalid syntax.!");
         }
 
         populateTree(allTokens, root);
@@ -175,10 +175,9 @@ public class Calculator {
             value = Integer.parseInt(stringValue);
         }
         else {
-            //todo: get value from cache
             value = cache.get(stringValue);
             if (value == null) {
-                throw new IllegalArgumentException();
+                throw new IllegalArgumentException("Invalid variable name: " + stringValue);
             }
         }
         return value;
@@ -202,25 +201,22 @@ public class Calculator {
         while (!tokens.isEmpty()) {
             Token token = tokens.remove();
             String param = token.getParam();
-            if ("(".equals(param)) {
+
+            if ("(".equals(param) || ",".equals(param)) {
                 //skip
             }
             else if (")".equals(param)) {
                 break;
             }
-            else if (",".equals(param)) {
-                //skip
-            }
             else if (token.isOperand()) {
-                //add node
-                Node newNode = new Node(token.getParam(), parent, token.getOperation());
+                //add next child
+                Node newNode = new Node(parent, token.getOperation());
                 parent.addChild(newNode);
-                //go deeper
                 populateTree(tokens, newNode);
             }
             else {
-                //add node
-                Node newNode = new Node(token.getParam(), parent, null);
+                //add next child
+                Node newNode = new Node(token.getParam(), parent);
                 parent.addChild(newNode);
             }
         }
