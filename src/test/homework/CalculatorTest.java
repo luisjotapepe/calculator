@@ -71,6 +71,7 @@ public class CalculatorTest {
         Assert.assertEquals(-4, result);
     }
 
+    //Simple div
     @Test
     public void div() {
         int result = calculator.process("div(4,2)");
@@ -88,6 +89,13 @@ public class CalculatorTest {
         calculator.process("div(4,0)");
     }
 
+    //Simple let
+    @Test
+    public void let() {
+        int result = calculator.process("let(a,5,add(a,a))");
+        Assert.assertEquals(10, result);
+    }
+
     @Test
     public void multiple_addmulOne() {
         int result = calculator.process("add(mul(-2,3),1)");
@@ -98,6 +106,12 @@ public class CalculatorTest {
     public void multiple_addmulTwo() {
         int result = calculator.process("add(1,mul(2,3))");
         Assert.assertEquals(7, result);
+    }
+
+    @Test
+    public void multiple_addmulThree() {
+        int result = calculator.process("mul(add(2,2),div(9,3))");
+        Assert.assertEquals(12, result);
     }
 
     @Test(expected = IllegalStateException.class)
@@ -114,4 +128,15 @@ public class CalculatorTest {
     public void multiple_imbalancedparenthesisInTheMiddle() {
         calculator.process("add(1,mul(((2,3))");
     }
+
+    @Test(expected = IllegalStateException.class)
+    public void multiple_invalidParenthesisFound() {
+        calculator.process("ad)d(1,mul(((2,3))");
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void multiple_tooManyDelimitersFound() {
+        calculator.process("ad)d(1,mul(2,,3))");
+    }
+
 }

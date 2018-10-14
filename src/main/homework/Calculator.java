@@ -3,6 +3,8 @@ package main.homework;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Calculator {
 
@@ -22,9 +24,11 @@ public class Calculator {
 
     private static final Stack<Token> allTokens = new Stack<>();
 
+    private static final Logger LOGGER = Logger.getLogger(Calculator.class.getName());
+
     public int process(String equation) {
         reset();
-        
+
         int result = calculate(equation);
 
         if (index != equation.length()-1) {
@@ -67,7 +71,7 @@ public class Calculator {
                 }
 
                 if (localTokens.isEmpty()) {
-                    //todo: invalid format
+                    throw new IllegalStateException("Invalid right parenthesis found at index: " + index);
                 }
 
                 if (isBinaryOperand(localTokens)) {
@@ -110,6 +114,7 @@ public class Calculator {
                         frstDelimiterFound = true;
                         //validate param syntax
                         localTokens.add(new Token(param));
+                        param = "";
                     }
                     else if (!scndDelimiterFound) {
                         if (localTokens.size() != 2) {
@@ -117,9 +122,10 @@ public class Calculator {
                         }
                         scndDelimiterFound = true;
                         localTokens.add(new Token(param));
+                        param = "";
                     }
                     else {
-                        //todo: throw too many delimiters
+                        throw new IllegalStateException("Too many delimiters found");
                     }
                 }
             }
@@ -136,6 +142,7 @@ public class Calculator {
                         //todo: invalid data
                     }
                     //todo: complete this part
+                    param += symbol;
                 }
             }
             else if (isValidNonNumeric(symbol)) {
@@ -148,11 +155,33 @@ public class Calculator {
                         //todo: invalid data
                     }
                 }
-                else if (isBinaryOperand(localTokens) && isOperandKeyword(equation)) {
-                    //todo: ************* calculate!!!! *************
-                    param = String.valueOf(calculate(equation));
-                } else {
-                    param += symbol;
+                else if (isBinaryOperand(localTokens)) {
+                    if (isOperandKeyword(equation)) {
+                        //todo: ************* calculate!!!! *************
+                        param = String.valueOf(calculate(equation));
+                    }
+                    else {
+                        throw new IllegalStateException("Invalid data in binary operand");
+                    }
+                }
+                else {
+                    if (localTokens.size() == 1) {
+                        param += symbol;
+                    }
+                    else if (localTokens.size() == 2) {
+                        if (isOperandKeyword(equation)) {
+                            //todo: ************* calculate!!!! *************
+                            param = String.valueOf(calculate(equation));
+                        }
+                        else {
+                            //todo: invalid data number or operand
+                        }
+                    }
+                    else if (localTokens.size() == 3) {
+                        
+                    }
+
+
                 }
             }
             else if (isWhiteSpace(symbol)) {

@@ -1,18 +1,26 @@
 package main.homework;
 
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class Main {
 
-    private static Calculator calculator = new Calculator();
+    private static final Calculator calculator = new Calculator();
+    private static final Logger LOGGER = Logger.getLogger(Main.class.getName());
 
     public static void main(String[] args) {
 
+        String output;
         try {
-            int result = calculator.process("add(100,add(add(100,100),100))");
-            System.out.println(result);
-        } catch (Exception ex) {
-            System.out.println(ex.getMessage());
+            output = String.valueOf(calculator.process("add(100,add(add(100,100),100))"));
+        } catch (IllegalStateException ex) {
+            LOGGER.log(Level.SEVERE, ex.getMessage());
+            output = ex.getMessage();
         }
+
+        System.out.println(output);
+
     }
 
 }
