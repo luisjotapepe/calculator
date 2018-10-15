@@ -27,18 +27,32 @@ To run the application
 
 Example:
 
+_Successful calculation_:
+
 ``$ java -jar Calculator.jar "let(a,let(x,10,add(x,x)),let(b,30,add(a,b)))"``
 
-``Oct 14, 2018 11:24:09 PM main.homework.Application runCalculation``
+``Oct 13, 2018 02:24:09 PM main.homework.Application runCalculation``
 
 ``INFO: Expression to calculate: let(a,let(x,10,add(x,x)),let(b,30,add(a,b)))``
 
-``Oct 14, 2018 11:24:09 PM main.homework.Application runCalculation``
+``Oct 13, 2018 02:24:09 PM main.homework.Application runCalculation``
 
 ``INFO: Result: 50``
 
+_Failed calculation_:
+
+``$ java -jar Calculator.jar "let(a,let(c,10,add(x,x)),let(b,30,add(a,b)))"``
+
+``Oct 13, 2018 02:29:47 PM main.homework.Application runCalculation``
+
+``INFO: Expression to calculate: let(a,let(c,10,add(x,x)),let(b,30,add(a,b)))``
+
+``Oct 13, 2018 02:29:47 PM main.homework.Application runCalculation``
+
+``INFO: Result: ****** Variable name not found in expression: x ******``
+
 * Run Test Cases:
 
-To run test cases
+To run test cases from CLI
 
 ``$ javac -cp libs/junit-4.12.jar:Calculator.jar:.  src/test/homework/CalculatorTest.java``
