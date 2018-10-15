@@ -5,21 +5,29 @@ public class Token {
 
     private Operand.Type operation;
     private String value;
+    private int index;
 
-    public Token(Operand.Type operand) {
+    public Token(Operand.Type operand, int index) {
         operation = operand;
+        this.index = index;
     }
 
-    public Token(String arg) {
-        value = arg;
+    public Token(String arg, int index) {
+        this.value = arg;
+        this.index = index;
     }
 
-    public Token (char arg) {
-        value = String.valueOf(arg);
+    public Token (char arg, int index) {
+        this.value = String.valueOf(arg);
+        this.index = index;
     }
 
     public int getSize() {
-        return getParam().length();
+        return toString().length();
+    }
+
+    public int getIndex() {
+        return index;
     }
 
     public boolean isOperand() {
@@ -30,7 +38,8 @@ public class Token {
         return operation;
     }
 
-    public String getParam() {
+    @Override
+    public String toString() {
         if (operation != null) {
             return operation.toString();
         } else {

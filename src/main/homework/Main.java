@@ -15,7 +15,6 @@ public class Main {
         try {
             output = String.valueOf(calculator.calculate(String.valueOf(args)));
         } catch (IllegalStateException ex) {
-            LOGGER.log(Level.SEVERE, ex.getMessage());
             output = ex.getMessage();
         }
 

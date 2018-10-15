@@ -3,7 +3,6 @@ package main.homework;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
-import java.util.Stack;
 
 public class Calculator {
 
@@ -11,12 +10,12 @@ public class Calculator {
     private static final char LPARENT = '(';
     private static final char RPARENT = ')';
 
-    private static final Stack<String> parenthesis = new Stack<>();
-    private static boolean balanced = true;
+//    private static final Stack<String> parenthesis = new Stack<>();
+//    private static boolean balanced = true;
 
     public int calculate(String equation) {
-        //tokenizer
-        Queue<Token> tokens = tokenizer(equation);
+        //tokenize
+        Queue<Token> tokens = tokenize(equation);
         //parser
         Node root = parser(tokens);
         //evaluator
@@ -25,7 +24,7 @@ public class Calculator {
         return Integer.parseInt(strResult);
     }
 
-    private Queue<Token> tokenizer(String equation) {
+    private Queue<Token> tokenize(String equation) {
         int index = 0;
         Queue<Token> allTokens = new LinkedList<>();
 
@@ -37,7 +36,7 @@ public class Calculator {
                 case LPARENT:
                 case RPARENT:
                 case DELIMITER:
-                    token = new Token(symbol);
+                    token = new Token(symbol, index);
                     allTokens.add(token);
                     index++;
                     break;
@@ -45,10 +44,10 @@ public class Calculator {
                     String value = getValue(equation, index);
                     Operand.Type type = getOperandType(value);
                     if (type != null) {
-                        token = new Token(type);
+                        token = new Token(type, index);
                     }
                     else {
-                        token = new Token(value);
+                        token = new Token(value, index);
                     }
                     allTokens.add(token);
                     index += token.getSize();
@@ -58,13 +57,13 @@ public class Calculator {
         return allTokens;
     }
 
-    private Node parser(Queue<Token> allTokens) {
+    private Node parser(Queue<Token> allTokens)  {
         Node root;
         Token token = allTokens.remove();
         if (token.isOperand()) {
-            root = new Node(token.getOperation());
+            root = new Node(token.getOperation(), token.getIndex());
         } else {
-            throw new IllegalArgumentException("First token is not operand. Invalid syntax.!");
+            throw new IllegalStateException("First token is not operand. Invalid syntax.!" + token.getIndex());
         }
 
         populateTree(allTokens, root);
@@ -88,6 +87,9 @@ public class Calculator {
                 stringResult = String.valueOf(result);
             }
             else if (node.isTernary()) {
+
+                validateNode(node);
+
                 node.addToCache(leftSideStr, centerSideStr);
                 Node rightNode = node.getRightNode();
                 rightNode.copyIntoCache(node.getCache());
@@ -99,10 +101,59 @@ public class Calculator {
         }
 
         if (stringResult == null) {
-            throw new IllegalStateException("Invalid state!");
+            throw new IllegalStateException("Invalid state!" + node.getIndex());
         }
 
         return stringResult;
+    }
+
+    private void populateTree(Queue<Token> tokens, Node parent) {
+        while (!tokens.isEmpty()) {
+            Token token = tokens.remove();
+            String param = token.toString();
+
+            if ("(".equals(param) || ",".equals(param)) {
+                //skip
+            }
+            else if (")".equals(param)) {
+                break;
+            }
+            else if (token.isOperand()) {
+                //add next child
+                Node newNode = new Node(token.getOperation(), parent, token.getIndex());
+                parent.addChild(newNode);
+                populateTree(tokens, newNode);
+            }
+            else {
+                //add next child
+                Node newNode = new Node(token.toString(), parent, token.getIndex());
+                parent.addChild(newNode);
+            }
+        }
+    }
+
+    private void validateNode(Node node) {
+        String lParam = node.getLeftNode().getValue();
+        if (lParam != null && isInvalidVariableName(lParam)) {
+            throw new IllegalStateException("'let' operation has invalid parameter: " + lParam);
+        }
+
+        String rParam = node.getCenterNode().getValue();
+        if (rParam != null && !isNumeric(rParam)) {
+            throw new IllegalStateException("'let' operation has invalid parameter: " + rParam);
+        }
+    }
+
+    private boolean isInvalidVariableName(String name) {
+        boolean isValid = false;
+        if (name == null
+                || name == ""
+                || !(name.matches("^[a-zA-Z\\_][a-zA-Z0-9\\_]*$"))
+                || getOperandType(name) != null) {
+
+            isValid = true;
+        }
+        return isValid;
     }
 
     private Operand.Type getOperandType(String arg) {
@@ -177,7 +228,7 @@ public class Calculator {
         else {
             value = cache.get(stringValue);
             if (value == null) {
-                throw new IllegalArgumentException("Invalid variable name: " + stringValue);
+                throw new IllegalArgumentException("Variable name not found in equation: " + stringValue);
             }
         }
         return value;
@@ -197,29 +248,8 @@ public class Calculator {
         return eq.substring(i, j);
     }
 
-    private void populateTree(Queue<Token> tokens, Node parent) {
-        while (!tokens.isEmpty()) {
-            Token token = tokens.remove();
-            String param = token.getParam();
-
-            if ("(".equals(param) || ",".equals(param)) {
-                //skip
-            }
-            else if (")".equals(param)) {
-                break;
-            }
-            else if (token.isOperand()) {
-                //add next child
-                Node newNode = new Node(parent, token.getOperation());
-                parent.addChild(newNode);
-                populateTree(tokens, newNode);
-            }
-            else {
-                //add next child
-                Node newNode = new Node(token.getParam(), parent);
-                parent.addChild(newNode);
-            }
-        }
+    private String retrieve(String message, int index) {
+        return message + " @ index: " + index;
     }
 
 }

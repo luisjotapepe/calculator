@@ -12,19 +12,23 @@ public class Node {
     private Node left;
     private Node center;
     private Node right;
+    private int index;
 
-    public Node(Node parent, Operand.Type operand) {
+    public Node(Operand.Type operand, Node parent, int index) {
         this.parent = parent;
         this.operand = operand;
+        this.index = index;
     }
 
-    public Node(String value, Node parent) {
+    public Node(String value, Node parent, int index) {
         this.value = value;
         this.parent = parent;
+        this.index = index;
     }
 
-    public Node(Operand.Type operand) {
+    public Node(Operand.Type operand, int index) {
         this.operand = operand;
+        this.index = index;
     }
 
     public void addChild(Node child) {
@@ -38,7 +42,7 @@ public class Node {
             right = child;
         }
         else {
-            //bad satate
+            throw new IllegalStateException("Failed to add child node");
         }
     }
 
@@ -62,14 +66,6 @@ public class Node {
         return Operand.ternaryOperators().contains(operand);
     }
 
-    public boolean isRoot() {
-        return (this.parent == null);
-    }
-
-    public boolean isLeaf() {
-        return (this.left == null) && (this.center == null) && (this.right == null);
-    }
-
     public boolean isOperand() {
         return operand != null;
     }
@@ -82,16 +78,20 @@ public class Node {
         return value;
     }
 
+    public int getIndex() {
+        return index;
+    }
+
+    public Map<String,Integer> getCache() {
+        return cache;
+    }
+
     public void addToCache(String key, String value) {
         Integer intValue = Integer.parseInt(value);
         cache.put(key, intValue);
     }
     public void copyIntoCache(Map<String, Integer> cache) {
         this.cache.putAll(cache);
-    }
-
-    public Map<String,Integer> getCache() {
-        return cache;
     }
 
 }

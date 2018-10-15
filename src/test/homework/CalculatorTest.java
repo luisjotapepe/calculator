@@ -268,6 +268,34 @@ public class CalculatorTest {
         Assert.assertEquals(50, result);
     }
 
+    /**
+     * Testing Error Handling
+     */
+
+    @Test(expected = IllegalStateException.class)
+    public void invalidNumericVariableName() {
+        calculator.calculate("let(1name,5,add(a,a))");
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void invalidSymbolInVariableName() {
+        calculator.calculate("let(-12,a,add(a,a))");
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void invalidCharacterVariableName() {
+        calculator.calculate("let(a#b,a,add(a,a))");
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void invalidValueExpression() {
+        calculator.calculate("let(a,a,add(a,a))");
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void invalidSyntax() {
+        calculator.calculate("aaa(a,a,add(a,a))");
+    }
 
 
 }
