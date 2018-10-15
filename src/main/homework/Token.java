@@ -3,12 +3,12 @@ package main.homework;
 
 public class Token {
 
-    private Operand.Type operation;
+    private Operator.Type operator;
     private String value;
     private int index;
 
-    public Token(Operand.Type operand, int index) {
-        operation = operand;
+    public Token(Operator.Type operator, int index) {
+        this.operator = operator;
         this.index = index;
     }
 
@@ -22,26 +22,22 @@ public class Token {
         this.index = index;
     }
 
-    public int getSize() {
-        return toString().length();
-    }
-
     public int getIndex() {
         return index;
     }
 
-    public boolean isOperand() {
-        return operation != null;
+    public boolean isOperator() {
+        return operator != null;
     }
 
-    public Operand.Type getOperation() {
-        return operation;
+    public Operator.Type getOperator() {
+        return operator;
     }
 
     @Override
     public String toString() {
-        if (operation != null) {
-            return operation.toString();
+        if (operator != null) {
+            return operator.toString();
         } else {
             return value;
         }

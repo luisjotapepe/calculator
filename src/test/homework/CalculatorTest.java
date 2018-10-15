@@ -19,6 +19,24 @@ public class CalculatorTest {
     }
 
     @Test
+    public void add_withSpace() {
+        int result = calculator.calculate("add( 2,2)");
+        Assert.assertEquals(4, result);
+    }
+
+    @Test
+    public void add_withTwoSpaces() {
+        int result = calculator.calculate("add(2 ,2)");
+        Assert.assertEquals(4, result);
+    }
+
+    @Test
+    public void add_withMultipleSpaces() {
+        int result = calculator.calculate(" add ( 2 , 2    )");
+        Assert.assertEquals(4, result);
+    }
+
+    @Test
     public void add_withNegativeAugend() {
         int result = calculator.calculate("add(-20,3)");
         Assert.assertEquals(-17, result);
@@ -268,6 +286,18 @@ public class CalculatorTest {
         Assert.assertEquals(50, result);
     }
 
+    @Test
+    public void let_nestedValueExpressionExtraStuff() {
+        int result = calculator.calculate("let(a,let(x,10,add(x,x)),let(b,30,add(a,b)))");
+        Assert.assertEquals(50, result);
+    }
+
+    @Test
+    public void let_nestedValueExpressionExtraStuffWithWhiteSpaces() {
+        int result = calculator.calculate(" let  ( a  , let  (  x ,  10 , add( x,x) ) ,let (b,30,  add(a,  b)  ) ) ");
+        Assert.assertEquals(50, result);
+    }
+
     /**
      * Testing Error Handling
      */
@@ -297,5 +327,24 @@ public class CalculatorTest {
         calculator.calculate("aaa(a,a,add(a,a))");
     }
 
+    @Test(expected = IllegalStateException.class)
+    public void imbalanceClosingParenthesis() {
+        calculator.calculate("aaa(a,a,add(a,a)))))");
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void imbalanceOpeningParenthesis() {
+        calculator.calculate("aaa(a,a,add((a,a)))");
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void invalidSpaces() {
+        calculator.calculate("let(a a,5,add((a,10)))");
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void invalidSpacesInOperand() {
+        calculator.calculate("l et(a a,5,add((a,10)))");
+    }
 
 }

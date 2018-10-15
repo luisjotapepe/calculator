@@ -6,29 +6,25 @@ import java.util.Map;
 public class Node {
 
     private Map<String,Integer> cache = new HashMap<>();
-    private Operand.Type operand;
+    private Operator.Type operator;
     private String value;
     private Node parent;
     private Node left;
     private Node center;
     private Node right;
-    private int index;
 
-    public Node(Operand.Type operand, Node parent, int index) {
+    public Node(Operator.Type operator, Node parent) {
         this.parent = parent;
-        this.operand = operand;
-        this.index = index;
+        this.operator = operator;
     }
 
-    public Node(String value, Node parent, int index) {
+    public Node(String value, Node parent) {
         this.value = value;
         this.parent = parent;
-        this.index = index;
     }
 
-    public Node(Operand.Type operand, int index) {
-        this.operand = operand;
-        this.index = index;
+    public Node(Operator.Type operator) {
+        this.operator = operator;
     }
 
     public void addChild(Node child) {
@@ -58,28 +54,24 @@ public class Node {
         return this.right;
     }
 
-    public boolean isBinary() {
-        return Operand.binaryOperators(). contains(operand);
+    public boolean isBinaryOperator() {
+        return Operator.binaryOperators(). contains(operator);
     }
 
-    public boolean isTernary() {
-        return Operand.ternaryOperators().contains(operand);
+    public boolean isTernaryOperator() {
+        return Operator.ternaryOperators().contains(operator);
     }
 
-    public boolean isOperand() {
-        return operand != null;
+    public boolean isOperatorType() {
+        return operator != null;
     }
 
-    public Operand.Type getOperand() {
-        return operand;
+    public Operator.Type getOperator() {
+        return operator;
     }
 
     public String getValue() {
         return value;
-    }
-
-    public int getIndex() {
-        return index;
     }
 
     public Map<String,Integer> getCache() {

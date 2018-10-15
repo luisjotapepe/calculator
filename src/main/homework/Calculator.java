@@ -10,26 +10,35 @@ public class Calculator {
     private static final char LPARENT = '(';
     private static final char RPARENT = ')';
 
-//    private static final Stack<String> parenthesis = new Stack<>();
-//    private static boolean balanced = true;
+    public int calculate(String expression) {
 
-    public int calculate(String equation) {
-        //tokenize
-        Queue<Token> tokens = tokenize(equation);
+        //tokenizer
+        Queue<Token> tokens = tokenize(expression);
         //parser
-        Node root = parser(tokens);
+        Node root = extractTree(tokens);
         //evaluator
         String strResult = evaluator(root);
 
         return Integer.parseInt(strResult);
     }
 
-    private Queue<Token> tokenize(String equation) {
+    private Queue<Token> tokenize(String expression) {
+        if (expression == null || expression.trim() == "") {
+            throw new IllegalArgumentException("No expression to calculate");
+        }
+
+        final int EXPRESSION_MIN_LENGTH = 8;
+        if (expression.trim().length() < EXPRESSION_MIN_LENGTH) {
+            throw new IllegalArgumentException("Expression length is less than expected (" + EXPRESSION_MIN_LENGTH + ")");
+        }
+
+        String trimmedExpression = expression.trim();
+
         int index = 0;
         Queue<Token> allTokens = new LinkedList<>();
 
-        while (index < equation.length()) {
-            char symbol = equation.charAt(index);
+        while (index < trimmedExpression.length()) {
+            char symbol = trimmedExpression.charAt(index);
             Token token;
 
             switch (symbol) {
@@ -41,29 +50,42 @@ public class Calculator {
                     index++;
                     break;
                 default:
-                    String value = getValue(equation, index);
-                    Operand.Type type = getOperandType(value);
-                    if (type != null) {
-                        token = new Token(type, index);
+                    String value = getValue(trimmedExpression, index);
+                    String trimmedValue = value.trim();
+                    if (trimmedValue.length() != 0) {
+                        validateValue(trimmedValue, index);
+                        Operator.Type type = getOperatorType(trimmedValue);
+                        if (type != null) {
+                            token = new Token(type, index);
+                        }
+                        else {
+                            token = new Token(trimmedValue, index);
+                        }
+                        allTokens.add(token);
                     }
-                    else {
-                        token = new Token(value, index);
-                    }
-                    allTokens.add(token);
-                    index += token.getSize();
+                    index += value.length();
                     break;
             }
         }
         return allTokens;
     }
 
-    private Node parser(Queue<Token> allTokens)  {
+    private void validateValue(String value, int index) {
+        if (value == null) {
+            throw new IllegalStateException("Error parsing value at index: " + index);
+        }
+        if (value.chars().anyMatch(Character::isWhitespace)) {
+            throw new IllegalStateException("Invalid white space found at index " + index);
+        }
+    }
+
+    private Node extractTree(Queue<Token> allTokens)  {
         Node root;
         Token token = allTokens.remove();
-        if (token.isOperand()) {
-            root = new Node(token.getOperation(), token.getIndex());
+        if (token.isOperator()) {
+            root = new Node(token.getOperator());
         } else {
-            throw new IllegalStateException("First token is not operand. Invalid syntax.!" + token.getIndex());
+            throw new IllegalStateException("First token is not operator type. Invalid syntax.!" + token.getIndex());
         }
 
         populateTree(allTokens, root);
@@ -72,25 +94,24 @@ public class Calculator {
 
     private String evaluator(Node node) {
         String stringResult = null;
-        if (node.isOperand()) {
+        if (node.isOperatorType()) {
             String leftSideStr = evaluator(node.getLeftNode());
 
             Node centerNode = node.getCenterNode();
             centerNode.copyIntoCache(node.getCache());
             String centerSideStr = evaluator(node.getCenterNode());
 
-            if (node.isBinary()) {
+            if (node.isBinaryOperator()) {
                 Integer dLeft = getValueFromString(leftSideStr, node.getCache());
                 Integer dCenter = getValueFromString(centerSideStr, node.getCache());
 
                 Integer result = calculateBinary(node, dLeft, dCenter);
                 stringResult = String.valueOf(result);
             }
-            else if (node.isTernary()) {
-
+            else if (node.isTernaryOperator()) {
                 validateNode(node);
-
                 node.addToCache(leftSideStr, centerSideStr);
+
                 Node rightNode = node.getRightNode();
                 rightNode.copyIntoCache(node.getCache());
                 stringResult = evaluator(rightNode);
@@ -101,7 +122,7 @@ public class Calculator {
         }
 
         if (stringResult == null) {
-            throw new IllegalStateException("Invalid state!" + node.getIndex());
+            throw new IllegalStateException("Invalid state!");
         }
 
         return stringResult;
@@ -118,15 +139,15 @@ public class Calculator {
             else if (")".equals(param)) {
                 break;
             }
-            else if (token.isOperand()) {
+            else if (token.isOperator()) {
                 //add next child
-                Node newNode = new Node(token.getOperation(), parent, token.getIndex());
+                Node newNode = new Node(token.getOperator(), parent);
                 parent.addChild(newNode);
                 populateTree(tokens, newNode);
             }
             else {
                 //add next child
-                Node newNode = new Node(token.toString(), parent, token.getIndex());
+                Node newNode = new Node(token.toString(), parent);
                 parent.addChild(newNode);
             }
         }
@@ -149,30 +170,30 @@ public class Calculator {
         if (name == null
                 || name == ""
                 || !(name.matches("^[a-zA-Z\\_][a-zA-Z0-9\\_]*$"))
-                || getOperandType(name) != null) {
+                || getOperatorType(name) != null) {
 
             isValid = true;
         }
         return isValid;
     }
 
-    private Operand.Type getOperandType(String arg) {
-        Operand.Type type;
+    private Operator.Type getOperatorType(String arg) {
+        Operator.Type type;
         switch(arg) {
             case "add":
-                 type = Operand.Type.add;
+                 type = Operator.Type.add;
                  break;
             case "sub":
-                type = Operand.Type.sub;
+                type = Operator.Type.sub;
                 break;
             case "mul":
-                type = Operand.Type.mul;
+                type = Operator.Type.mul;
                 break;
             case "div":
-                type = Operand.Type.div;
+                type = Operator.Type.div;
                 break;
             case "let":
-                type = Operand.Type.let;
+                type = Operator.Type.let;
                 break;
             default:
                 type = null;
@@ -186,7 +207,7 @@ public class Calculator {
 
     private Integer calculateBinary(Node node, Integer iLeft, Integer iCenter) {
         Integer result;
-        switch(node.getOperand()) {
+        switch(node.getOperator()) {
             case add:
                 result = iLeft + iCenter;
                 break;
@@ -200,7 +221,7 @@ public class Calculator {
                 result = calculateDiv(iLeft, iCenter);
                 break;
             default:
-                throw new IllegalArgumentException();
+                throw new IllegalArgumentException("Invalid data to calculate value. Please check expression.");
         }
         return result;
     }
@@ -228,28 +249,24 @@ public class Calculator {
         else {
             value = cache.get(stringValue);
             if (value == null) {
-                throw new IllegalArgumentException("Variable name not found in equation: " + stringValue);
+                throw new IllegalArgumentException("Variable name not found in expression: " + stringValue);
             }
         }
         return value;
     }
 
-    private String getValue(String eq, final int i) {
-        int j = i;
-        for (; i < eq.length();) {
-            if (eq.charAt(j) == LPARENT
-                    || eq.charAt(j) == RPARENT
-                    || eq.charAt(j) == DELIMITER) {
-                return eq.substring(i, j);
+    private String getValue(String expression, final int index) {
+        int j = index;
+        for (; index < expression.length() ;) {
+            if (expression.charAt(j) == LPARENT
+                    || expression.charAt(j) == RPARENT
+                    || expression.charAt(j) == DELIMITER) {
+                return expression.substring(index, j);
             } else {
                 j++;
             }
         }
-        return eq.substring(i, j);
-    }
-
-    private String retrieve(String message, int index) {
-        return message + " @ index: " + index;
+        return expression.substring(index, j);
     }
 
 }
