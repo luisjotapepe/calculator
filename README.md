@@ -1,7 +1,7 @@
 # Simple Calculator Program
 
 This implementation of the calculator has been created following a methodology where the expression calculation happens in three steps: **tokenizing, parsing and evaluating**. 
-The stream of characters is fed into the **tokenizer** which iterates character by character creating a collection of tokens that represent a meaningful part of the expression. 
+The stream of characters (algorithmic expression) is fed into the **tokenizer** which iterates character by character creating a collection of tokens that represent a meaningful part of the expression. 
 This collection is then **parsed** and logically mapped out on to a tree. 
 Lastly, the **evaluator** traverses the tree evaluating each of the logical operator which subsequently returns the value of the calculated expression.
 
