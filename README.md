@@ -23,7 +23,7 @@ From the home folder of the src code run the following scripts
 
 To run test cases from CLI
 
-``$ javac -cp libs/junit-4.12.jar:Calculator.jar:.  src/test/homework/CalculatorTest.java``
+``$ javac -cp libs/junit-4.12.jar:Calculator.jar:.  src/test/homework/CalculatorTest.java -d out/``
 
 * Run Application:
 
