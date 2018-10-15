@@ -19,6 +19,12 @@ From the home folder of the src code run the following scripts
 
 ``$ jar cvfm Calculator.jar src/META-INF/MANIFEST.MF -C out/ .``
 
+* Run Test Cases:
+
+To run test cases from CLI
+
+``$ javac -cp libs/junit-4.12.jar:Calculator.jar:.  src/test/homework/CalculatorTest.java``
+
 * Run Application:
 
 To run the application
@@ -51,8 +57,3 @@ _Failed calculation_:
 
 ``INFO: Result: ****** Variable name not found in expression: x ******``
 
-* Run Test Cases:
-
-To run test cases from CLI
-
-``$ javac -cp libs/junit-4.12.jar:Calculator.jar:.  src/test/homework/CalculatorTest.java``
