@@ -26,11 +26,15 @@ To run the application
 ``$ java -jar Calculator.jar "<EXPRESSIOM>"`` where ``<EPRESSION>`` is an arithmetic expression desired to be calculated.
 
 Example:
+
 ``$ java -jar Calculator.jar "let(a,let(x,10,add(x,x)),let(b,30,add(a,b)))"``
 
 ``Oct 14, 2018 11:24:09 PM main.homework.Application runCalculation``
+
 ``INFO: Expression to calculate: let(a,let(x,10,add(x,x)),let(b,30,add(a,b)))``
+
 ``Oct 14, 2018 11:24:09 PM main.homework.Application runCalculation``
+
 ``INFO: Result: 50``
 
 * Run Test Cases:
