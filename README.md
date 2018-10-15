@@ -13,7 +13,8 @@ Lastly, the **evaluator** traverses the tree evaluating each of the logical oper
 
 * Build:
 
-From the home folder of the src code run the following scripts
+From the application home folder of the src code run the following scripts:
+
 ``$ mkdir out``
 
 ``$ javac src/main/homework/*.java -d out/``
