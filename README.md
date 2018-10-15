@@ -7,7 +7,7 @@ Lastly, the **evaluator** traverses the tree evaluating each of the logical oper
 
 * Requirements:
  
--- Java 1.6+
+-- Java 1.8+
 
 -- Linux/Mac Os
 
