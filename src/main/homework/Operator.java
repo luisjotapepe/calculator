@@ -1,17 +1,15 @@
 package main.homework;
 
-import java.util.EnumSet;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Operator {
     public enum Type {
         add, sub, div, mul, let
     }
 
-    public static EnumSet<Operator.Type> binaryOperators() {
-        return EnumSet.of(Type.add, Type.sub, Type.mul, Type.div);
-    }
+    protected static Set<Type> binary = new HashSet<>(Arrays.asList(Type.add, Type.sub, Type.mul, Type.div));
+    protected static Set<Type> ternary = new HashSet<>(Arrays.asList(Type.let));
 
-    public static EnumSet<Operator.Type> ternaryOperators() {
-        return EnumSet.of(Type.let);
-    }
 }

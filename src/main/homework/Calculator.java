@@ -141,13 +141,13 @@ public class Calculator {
             }
             else if (token.isOperator()) {
                 //add next child
-                Node newNode = new Node(token.getOperator(), parent);
+                Node newNode = new Node(token.getOperator());
                 parent.addChild(newNode);
                 populateTree(tokens, newNode);
             }
             else {
                 //add next child
-                Node newNode = new Node(token.toString(), parent);
+                Node newNode = new Node(token.toString());
                 parent.addChild(newNode);
             }
         }
@@ -257,7 +257,7 @@ public class Calculator {
 
     private String getValue(String expression, final int index) {
         int j = index;
-        for (; index < expression.length() ;) {
+        while (index < expression.length()) {
             if (expression.charAt(j) == LPARENT
                     || expression.charAt(j) == RPARENT
                     || expression.charAt(j) == DELIMITER) {

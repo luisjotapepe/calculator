@@ -1,15 +1,19 @@
 package main.homework;
 
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class Application {
 
     private static final Calculator calculator = new Calculator();
+    private static final Logger LOGGER = Logger.getLogger(Application.class.getName());
 
     public static void main(String[] args) {
 
         String expression = args[0];
         if (expression == null || expression == "") {
-            System.out.println("No expression to calculate");
+            LOGGER.log(Level.SEVERE, "No expression to calculate");
         }
         else {
             runCalculation(expression);
@@ -18,7 +22,9 @@ public class Application {
     }
 
     private static void runCalculation(String expression) {
-        System.out.println("Expression to calculate: " + expression);
+
+        LOGGER.log(Level.INFO, "Expression to calculate: " + expression);
+
         String output;
         try {
             int result = calculator.calculate(expression);
@@ -27,7 +33,7 @@ public class Application {
             output = "****** " + ex.getMessage() + " ******";
         }
 
-        System.out.println("Result: " + output);
+        LOGGER.log(Level.INFO, "Result: " + output);
     }
 
 }
